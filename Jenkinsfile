@@ -13,6 +13,13 @@ pipeline {
             }
         }
 
+    stage('Set Permissions') {
+            steps {
+                sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/Enaam_V1_FrontEnd'
+                sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/Enaam_V1_FrontEnd'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
