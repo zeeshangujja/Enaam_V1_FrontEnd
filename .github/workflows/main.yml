@@ -1,0 +1,26 @@
+name: Docker CI/CD to EC2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t react-app .
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.ZEESHANAWSKEY }}
+          script: |
+            cd /home/ubuntu/Enaam_V1_FrontEnd
+            docker stop react-app || true
+            docker rm react-app || true
+            git pull origin main
+            docker build -t react-app .
+            docker run -d --name react-app -p 3000:3000 --restart unless-stopped react-app
